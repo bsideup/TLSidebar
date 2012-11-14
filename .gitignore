@@ -1,8 +1,10 @@
 Thumbs.db
 .DS_Store
-**/*.xcodeproj/xcuserdata/**
-*.xcodeproj/project.xcworkspace/
-*.xcworkspace/
+
+xcuserdata
+
+*.xcworkspace
+
 Podfile.lock
 Pods/
 
