@@ -1,12 +1,14 @@
 #import <UIKit/UIKit.h>
 
-#define kVisiblePortion 40
-#define kMenuTableSize 280
+#define kDefaultMenuTableSize 280
 
 @interface TLSidebarViewController : UIViewController
 
 @property( readonly ) UIPanGestureRecognizer *panGesture;
 @property( readonly ) UITapGestureRecognizer *tapGesture;
+
+@property( readonly ) UIViewController *menu;
+@property( readonly ) UIViewController *content;
 
 @property( nonatomic, readonly ) BOOL sidebarHidden;
 

@@ -5,8 +5,6 @@
 
 @interface TLSidebarViewController ()
 {
-	UIViewController *content;
-	UIViewController *menu;
 }
 
 @end
@@ -52,25 +50,25 @@
 
 - ( void ) panItem:(UIPanGestureRecognizer *)gesture
 {
-	UIView *movingView = content.view;
+	UIView *movingView = self.content.view;
+	CGRect movingViewFrame = movingView.frame;
 	CGPoint translation = [gesture translationInView:movingView];
 
-	if ( ( movingView.frame.origin.x + translation.x < 0 ) ||
-			( movingView.frame.origin.x + translation.x > kMenuTableSize ) )
+	if ( ( movingViewFrame.origin.x + translation.x < 0 )  )
 	{
 		translation.x = 0.0;
 	}
 
-	[movingView setCenter:CGPointMake( movingView.center.x + translation.x, movingView.center.y )];
+	movingViewFrame.origin.x = movingViewFrame.origin.x + translation.x;
+	movingView.frame = movingViewFrame;
 
 	[gesture setTranslation:CGPointZero inView:movingView.superview];
 
-	if ( [gesture state] == UIGestureRecognizerStateEnded )
+	if ( gesture.state == UIGestureRecognizerStateEnded )
 	{
-		[self setSidebarHidden:movingView.center.x <= content.view.bounds.size.width animated:YES];
+		[self setSidebarHidden:( movingViewFrame.origin.x <= self.menu.view.frame.size.width * 0.5 ) animated:YES];
 	}
 }
-
 
 - ( void ) setSidebarHidden:(BOOL)hidden
 				   animated:(BOOL)animated
@@ -83,9 +81,9 @@
 	[UIView animateWithDuration:animated ? self.slideInterval : 0
 					 animations:^
 					 {
-						 CGRect frame = content.view.frame;
-						 frame.origin.x = hidden ? 0 : kMenuTableSize;
-						 content.view.frame = frame;
+						 CGRect frame = self.content.view.frame;
+						 frame.origin.x = !hidden * self.menu.view.frame.size.width;
+						 self.content.view.frame = frame;
 					 }
 					 completion:^( BOOL completed )
 					 {
@@ -103,9 +101,9 @@
 {
 	if ( [segue.identifier isEqualToString:@"content"] )
 	{
-		content = segue.destinationViewController;
+		_content = segue.destinationViewController;
 
-		CALayer *layer = [content.view layer];
+		CALayer *layer = [self.content.view layer];
 		layer.shadowColor = [UIColor blackColor].CGColor;
 		layer.shadowOpacity = 0.3;
 		layer.shadowOffset = CGSizeMake( -15, 0 );
@@ -113,18 +111,24 @@
 		layer.masksToBounds = NO;
 		layer.shadowPath = [UIBezierPath bezierPathWithRect:layer.bounds].CGPath;
 
-		[content.view addGestureRecognizer:self.tapGesture];
-		[content.view addGestureRecognizer:self.panGesture];
+		[self.content.view addGestureRecognizer:self.tapGesture];
+		[self.content.view addGestureRecognizer:self.panGesture];
 
-		content.view.frame = self.view.frame;
+		self.content.view.frame = self.view.frame;
+
+		[self.view addSubview:self.content.view];
 	}
 	else if ( [segue.identifier isEqualToString:@"menu"] )
 	{
-		menu = segue.destinationViewController;
+		_menu = segue.destinationViewController;
 
 		CGRect bounds = self.view.bounds;
-		bounds.size.width = kMenuTableSize;
-		menu.view.frame = bounds;
+		bounds.size.width = kDefaultMenuTableSize;
+		self.menu.view.frame = bounds;
+
+		self.view.backgroundColor = self.menu.view.backgroundColor;
+
+		[self.view insertSubview:self.menu.view atIndex:0];
 	}
 	else
 	{
@@ -132,7 +136,6 @@
 	}
 
 	[self addChildViewController:segue.destinationViewController];
-	[self.view addSubview:( (UIViewController *) segue.destinationViewController ).view];
 	[segue.destinationViewController didMoveToParentViewController:self];
 }
 
@@ -143,8 +146,16 @@
 
 - ( void ) viewWillAppear:(BOOL)animated
 {
-	[self performSegueWithIdentifier:@"menu" sender:nil];
-	[self performSegueWithIdentifier:@"content" sender:nil];
+	if(!self.menu)
+	{
+		[self performSegueWithIdentifier:@"menu" sender:nil];
+	}
+
+	if(!self.content)
+	{
+		[self performSegueWithIdentifier:@"content" sender:nil];
+	}
+
 	[super viewWillAppear:animated];
 }
 
