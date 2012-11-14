@@ -1,11 +1,3 @@
-//
-//  TLSidebarViewController.h
-//  SASlideMenu
-//
-//  Created by Stefano Antonelli on 7/29/12.
-//  Copyright (c) 2012 Stefano Antonelli. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
 
 #define kVisiblePortion 40
@@ -13,12 +5,12 @@
 
 @interface TLSidebarViewController : UIViewController
 
-@property ( readonly)UIPanGestureRecognizer *panGesture;
-@property ( readonly)UITapGestureRecognizer *tapGesture;
+@property( readonly ) UIPanGestureRecognizer *panGesture;
+@property( readonly ) UITapGestureRecognizer *tapGesture;
 
-@property ( nonatomic) float slideInternal;
+@property( nonatomic, readonly ) BOOL sidebarHidden;
 
-- ( BOOL ) sidebarHidden;
+@property( nonatomic ) float slideInterval;
 
 - ( void ) setSidebarHidden:(BOOL)hidden
 				   animated:(BOOL)animated;
