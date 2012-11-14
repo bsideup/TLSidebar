@@ -1,6 +1,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "TLSidebarViewController.h"
+#import "TLSidebarSegue.h"
 #import <QuartzCore/QuartzCore.h>
 
 @interface TLSidebarViewController ()
@@ -11,33 +12,12 @@
 
 @implementation TLSidebarViewController
 
-- ( id ) initWithCoder:(NSCoder *)aDecoder
-{
-	if ( self == [super initWithCoder:aDecoder] )
-	{
-		[self internalInit];
-	}
-
-	return self;
-}
-
-- ( id ) initWithNibName:(NSString *)nibNameOrNil
-				  bundle:(NSBundle *)nibBundleOrNil
-{
-	if ( self == [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil] )
-	{
-		[self internalInit];
-	}
-
-	return self;
-}
-
-- ( void ) internalInit
+- ( void ) viewDidLoad
 {
 	_slideInterval = 0.3;
 	_sidebarHidden = YES;
 
-	_tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showSideBar)];
+	_tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideSidebar)];
 	_tapGesture.enabled = NO;
 	_tapGesture.cancelsTouchesInView = YES;
 	_tapGesture.delaysTouchesBegan = YES;
@@ -54,7 +34,7 @@
 	CGRect movingViewFrame = movingView.frame;
 	CGPoint translation = [gesture translationInView:movingView];
 
-	if ( ( movingViewFrame.origin.x + translation.x < 0 )  )
+	if ( ( movingViewFrame.origin.x + translation.x < 0 ) )
 	{
 		translation.x = 0.0;
 	}
@@ -91,7 +71,7 @@
 					 }];
 }
 
-- ( void ) showSideBar
+- ( void ) hideSidebar
 {
 	[self setSidebarHidden:YES animated:YES];
 }
@@ -99,6 +79,8 @@
 - ( void ) prepareForSegue:(UIStoryboardSegue *)segue
 					sender:(id)sender
 {
+	NSAssert([segue isKindOfClass:TLSidebarSegue.class], @"TLSidebarViewController only allows TLSidebarSegues!");
+
 	if ( [segue.identifier isEqualToString:@"content"] )
 	{
 		_content = segue.destinationViewController;
@@ -146,12 +128,12 @@
 
 - ( void ) viewWillAppear:(BOOL)animated
 {
-	if(!self.menu)
+	if ( !self.menu )
 	{
 		[self performSegueWithIdentifier:@"menu" sender:nil];
 	}
 
-	if(!self.content)
+	if ( !self.content )
 	{
 		[self performSegueWithIdentifier:@"content" sender:nil];
 	}
