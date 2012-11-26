@@ -1,19 +1,25 @@
 #import <QuartzCore/QuartzCore.h>
 
 #import "TLSidebarViewController.h"
-#import "TLSidebarSegue.h"
+#import "TLSidebarContentSegue.h"
 #import <QuartzCore/QuartzCore.h>
-
-@interface TLSidebarViewController ()
-{
-}
-
-@end
 
 @implementation TLSidebarViewController
 
+@synthesize contentViewController = _contentViewController;
+
+-(id)initWithContentViewController:(UIViewController *)aContentViewController
+{
+	if(self = [super init])
+	{
+		self.contentViewController = aContentViewController;
+	}
+	return self;
+}
+
 - ( void ) viewDidLoad
 {
+	[super viewDidLoad];
 	_slideInterval = 0.3;
 	_sidebarHidden = YES;
 
@@ -28,15 +34,44 @@
 	_panGesture.delaysTouchesBegan = YES;
 }
 
+- ( void ) viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	if ( !self.contentViewController )
+	{
+		[self performSegueWithIdentifier:@"contentViewController" sender:self];
+	}
+}
+
+- ( void ) setCurrentDirection:(TLSidebarMenuDirection)direction
+{
+	_currentDirection = direction;
+	UIViewController *newMenu = _currentDirection == TLSidebarMenuDirectionRight ? self.rightMenu : self.leftMenu;
+
+	if ( newMenu != self.currentMenu )
+	{
+		[self.currentMenu.view removeFromSuperview];
+		_currentMenu = newMenu;
+		[self.view insertSubview:self.currentMenu.view atIndex:0];
+	}
+}
+
+
 - ( void ) panItem:(UIPanGestureRecognizer *)gesture
 {
-	UIView *movingView = self.content.view;
+	UIView *movingView = self.contentViewController.view;
 	CGRect movingViewFrame = movingView.frame;
 	CGPoint translation = [gesture translationInView:movingView];
 
-	if ( ( movingViewFrame.origin.x + translation.x < 0 ) )
+	if ( ( movingViewFrame.origin.x + translation.x != 0 ) )
 	{
-		translation.x = 0.0;
+		self.currentDirection = ( movingViewFrame.origin.x + translation.x > 0 ) ? TLSidebarMenuDirectionLeft : TLSidebarMenuDirectionRight;
+
+		if ( self.currentMenu == nil )
+		{
+			translation.x = 0.0;
+			translation.y = 0.0;
+		}
 	}
 
 	movingViewFrame.origin.x = movingViewFrame.origin.x + translation.x;
@@ -46,9 +81,17 @@
 
 	if ( gesture.state == UIGestureRecognizerStateEnded )
 	{
-		[self setSidebarHidden:( movingViewFrame.origin.x <= self.menu.view.frame.size.width * 0.5 ) animated:YES];
+		if ( self.currentDirection == TLSidebarMenuDirectionRight )
+		{
+			[self setSidebarHidden:( ( movingViewFrame.origin.x + movingViewFrame.size.width ) >= ( self.currentMenu.view.frame.size.width + self.currentMenu.view.frame.origin.x ) * 0.5 ) animated:YES];
+		}
+		else
+		{
+			[self setSidebarHidden:( movingViewFrame.origin.x <= self.currentMenu.view.frame.size.width * 0.5 ) animated:YES];
+		}
 	}
 }
+
 
 - ( void ) setSidebarHidden:(BOOL)hidden
 				   animated:(BOOL)animated
@@ -58,87 +101,104 @@
 	self.view.userInteractionEnabled = NO;
 	self.tapGesture.enabled = !hidden;
 
+	if ( hidden == NO )
+	{
+		self.view.backgroundColor = self.currentMenu.view.backgroundColor;
+	}
+
 	[UIView animateWithDuration:animated ? self.slideInterval : 0
 					 animations:^
 					 {
-						 CGRect frame = self.content.view.frame;
-						 frame.origin.x = !hidden * self.menu.view.frame.size.width;
-						 self.content.view.frame = frame;
+						 CGRect frame = self.contentViewController.view.frame;
+						 frame.origin.x = !hidden * ( _currentDirection == TLSidebarMenuDirectionRight ? -1 : 1 ) * self.currentMenu.view.frame.size.width;
+						 self.contentViewController.view.frame = frame;
 					 }
 					 completion:^( BOOL completed )
 					 {
 						 self.view.userInteractionEnabled = YES;
+						 if ( hidden == YES )
+						 {
+							 [self.currentMenu.view removeFromSuperview];
+							 _currentMenu = nil;
+						 }
 					 }];
 }
 
 - ( void ) hideSidebar
 {
-	[self setSidebarHidden:YES animated:YES];
+	[self hideSidebarAnimated:YES];
+}
+
+- ( void ) hideSidebarAnimated:(BOOL)animated
+{
+	[self setSidebarHidden:YES animated:animated];
+}
+
+- ( void ) showSidebar:(UIViewController *)sidebar
+		   inDirection:(TLSidebarMenuDirection)direction
+			  animated:(BOOL)animated
+{
+	_currentDirection = direction;
+	_currentMenu = sidebar;
+
+	CGRect bounds = self.view.bounds;
+	bounds.size.width = kDefaultMenuTableSize;
+	if ( direction == TLSidebarMenuDirectionLeft )
+	{
+		_leftMenu = self.currentMenu;
+	}
+	else if ( direction == TLSidebarMenuDirectionRight )
+	{
+		_rightMenu = self.currentMenu;
+		bounds.origin.x = self.view.bounds.size.width - bounds.size.width;
+	}
+	self.currentMenu.view.frame = bounds;
+
+	[self.view insertSubview:self.currentMenu.view atIndex:0];
+
+	[self setSidebarHidden:NO animated:animated];
 }
 
 - ( void ) prepareForSegue:(UIStoryboardSegue *)segue
 					sender:(id)sender
 {
-	NSAssert([segue isKindOfClass:TLSidebarSegue.class], @"TLSidebarViewController only allows TLSidebarSegues!");
+	NSAssert([segue isKindOfClass:TLSidebarContentSegue.class], @"TLSidebarViewController only allows TLSidebarContentSegues!");
 
-	if ( [segue.identifier isEqualToString:@"content"] )
+	if ( [segue.identifier isEqualToString:@"contentViewController"] )
 	{
-		_content = segue.destinationViewController;
-
-		CALayer *layer = [self.content.view layer];
-		layer.shadowColor = [UIColor blackColor].CGColor;
-		layer.shadowOpacity = 0.3;
-		layer.shadowOffset = CGSizeMake( -15, 0 );
-		layer.shadowRadius = 10;
-		layer.masksToBounds = NO;
-		layer.shadowPath = [UIBezierPath bezierPathWithRect:layer.bounds].CGPath;
-
-		[self.content.view addGestureRecognizer:self.tapGesture];
-		[self.content.view addGestureRecognizer:self.panGesture];
-
-		self.content.view.frame = self.view.frame;
-
-		[self.view addSubview:self.content.view];
-	}
-	else if ( [segue.identifier isEqualToString:@"menu"] )
-	{
-		_menu = segue.destinationViewController;
-
-		CGRect bounds = self.view.bounds;
-		bounds.size.width = kDefaultMenuTableSize;
-		self.menu.view.frame = bounds;
-
-		self.view.backgroundColor = self.menu.view.backgroundColor;
-
-		[self.view insertSubview:self.menu.view atIndex:0];
+		self.contentViewController = segue.destinationViewController;
 	}
 	else
 	{
 		return;
 	}
+}
 
-	[self addChildViewController:segue.destinationViewController];
-	[segue.destinationViewController didMoveToParentViewController:self];
+-(void) setContentViewController:(UIViewController *)aContentViewController
+{
+	_contentViewController = aContentViewController;
+
+	CALayer *layer = [self.contentViewController.view layer];
+	layer.shadowColor = [UIColor blackColor].CGColor;
+	layer.shadowOpacity = 0.5;
+	layer.shadowRadius = 10;
+	//layer.shadowOffset = CGSizeMake( -15, 0 );
+	layer.masksToBounds = NO;
+	layer.shadowPath = [UIBezierPath bezierPathWithRect:layer.bounds].CGPath;
+
+	[self.contentViewController.view addGestureRecognizer:self.tapGesture];
+	[self.contentViewController.view addGestureRecognizer:self.panGesture];
+
+	[self.contentViewController willMoveToParentViewController:self];
+	[self addChildViewController:self.contentViewController];
+	[self.contentViewController didMoveToParentViewController:self];
+
+	[self.view addSubview:self.contentViewController.view];
 }
 
 - ( BOOL ) shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
 	return YES;
-}
-
-- ( void ) viewWillAppear:(BOOL)animated
-{
-	if ( !self.menu )
-	{
-		[self performSegueWithIdentifier:@"menu" sender:nil];
-	}
-
-	if ( !self.content )
-	{
-		[self performSegueWithIdentifier:@"content" sender:nil];
-	}
-
-	[super viewWillAppear:animated];
 }
 
 @end

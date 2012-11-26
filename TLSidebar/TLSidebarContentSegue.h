@@ -5,17 +5,9 @@
 //
 
 
-#import "TLSidebarSegue.h"
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 
-@implementation TLSidebarSegue
-{
-
-}
-
--(void) perform
-{
-
-}
-
+@interface TLSidebarContentSegue : UIStoryboardSegue
 @end

@@ -10,6 +10,8 @@
 		4925202B1653B06400C95CB5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4925202A1653B06300C95CB5 /* Foundation.framework */; };
 		4925206F1653C86A00C95CB5 /* TLSidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4925206B1653C86A00C95CB5 /* TLSidebarViewController.m */; };
 		492520701653C86A00C95CB5 /* UIViewController+TLSidebar.m in Sources */ = {isa = PBXBuildFile; fileRef = 4925206D1653C86A00C95CB5 /* UIViewController+TLSidebar.m */; };
+		493207B4165671A500FE3FDF /* TLRightSidebarSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 493207B3165671A500FE3FDF /* TLRightSidebarSegue.m */; };
+		493207B8165671B500FE3FDF /* TLLeftSidebarSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 493207B7165671B500FE3FDF /* TLLeftSidebarSegue.m */; };
 		A56A13DF12D9C6C2CC02C58B /* TLSidebarSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A56A1141E2CBE13FB29FA3B7 /* TLSidebarSegue.m */; };
 		A56A13F73C1FD5BB2FCA6FD3 /* TLSidebarSegue.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A56A123C7B37A9AA708E2D73 /* TLSidebarSegue.h */; };
 /* End PBXBuildFile section */
@@ -35,6 +37,10 @@
 		4925206B1653C86A00C95CB5 /* TLSidebarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLSidebarViewController.m; sourceTree = "<group>"; };
 		4925206C1653C86A00C95CB5 /* UIViewController+TLSidebar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+TLSidebar.h"; sourceTree = "<group>"; };
 		4925206D1653C86A00C95CB5 /* UIViewController+TLSidebar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+TLSidebar.m"; sourceTree = "<group>"; };
+		493207B2165671A500FE3FDF /* TLRightSidebarSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLRightSidebarSegue.h; sourceTree = "<group>"; };
+		493207B3165671A500FE3FDF /* TLRightSidebarSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLRightSidebarSegue.m; sourceTree = "<group>"; };
+		493207B6165671B500FE3FDF /* TLLeftSidebarSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLLeftSidebarSegue.h; sourceTree = "<group>"; };
+		493207B7165671B500FE3FDF /* TLLeftSidebarSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLLeftSidebarSegue.m; sourceTree = "<group>"; };
 		A56A1141E2CBE13FB29FA3B7 /* TLSidebarSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TLSidebarSegue.m; sourceTree = "<group>"; };
 		A56A123C7B37A9AA708E2D73 /* TLSidebarSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TLSidebarSegue.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,8 +90,12 @@
 				4925206C1653C86A00C95CB5 /* UIViewController+TLSidebar.h */,
 				4925206D1653C86A00C95CB5 /* UIViewController+TLSidebar.m */,
 				4925202D1653B06400C95CB5 /* Supporting Files */,
-				A56A1141E2CBE13FB29FA3B7 /* TLSidebarSegue.m */,
 				A56A123C7B37A9AA708E2D73 /* TLSidebarSegue.h */,
+				A56A1141E2CBE13FB29FA3B7 /* TLSidebarSegue.m */,
+				493207B2165671A500FE3FDF /* TLRightSidebarSegue.h */,
+				493207B3165671A500FE3FDF /* TLRightSidebarSegue.m */,
+				493207B6165671B500FE3FDF /* TLLeftSidebarSegue.h */,
+				493207B7165671B500FE3FDF /* TLLeftSidebarSegue.m */,
 			);
 			path = TLSidebar;
 			sourceTree = "<group>";
@@ -152,6 +162,8 @@
 				4925206F1653C86A00C95CB5 /* TLSidebarViewController.m in Sources */,
 				492520701653C86A00C95CB5 /* UIViewController+TLSidebar.m in Sources */,
 				A56A13DF12D9C6C2CC02C58B /* TLSidebarSegue.m in Sources */,
+				493207B4165671A500FE3FDF /* TLRightSidebarSegue.m in Sources */,
+				493207B8165671B500FE3FDF /* TLLeftSidebarSegue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

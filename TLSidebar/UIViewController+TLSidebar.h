@@ -1,6 +1,5 @@
 #import <Foundation/Foundation.h>
-
-@class TLSidebarViewController;
+#import "TLSidebarViewController.h"
 
 @interface UIViewController (TLSidebar)
 

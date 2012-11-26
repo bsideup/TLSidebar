@@ -5,8 +5,15 @@
 //
 
 
-#import <Foundation/Foundation.h>
+#import "TLSidebarContentSegue.h"
 
+@implementation TLSidebarContentSegue
+{
 
-@interface TLSidebarSegue : UIStoryboardSegue
+}
+
+-(void) perform
+{
+}
+
 @end
