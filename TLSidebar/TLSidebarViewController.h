@@ -25,6 +25,8 @@ typedef enum
 
 @property( nonatomic ) float slideInterval;
 
+-(id)initWithContentViewController:(UIViewController *)aContentViewController;
+
 -(void)hideSidebarAnimated:(BOOL)animated;
 
 -(void) showSidebar:(UIViewController *)sidebar
