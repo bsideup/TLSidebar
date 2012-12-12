@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import "TLSignals.h"
 
 #define kDefaultMenuTableSize 280
 
@@ -8,15 +9,22 @@ typedef enum
 	TLSidebarMenuDirectionRight
 } TLSidebarMenuDirection;
 
+
 @interface TLSidebarViewController : UIViewController
 
-@property( readonly  ) UIPanGestureRecognizer *panGesture;
-@property( readonly  ) UITapGestureRecognizer *tapGesture;
+@property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *willShowSidebarAnimatedSignal;
+@property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *didShowSidebarAnimatedSignal;
+@property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *willHideSidebarAnimatedSignal;
+@property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *didHideSidebarAnimatedSignal;
 
-@property( readonly  ) UIViewController *leftMenu;
-@property( readonly  ) UIViewController *rightMenu;
+@property( nonatomic, readonly ) UIPanGestureRecognizer *panGesture;
+@property( nonatomic, readonly ) UITapGestureRecognizer *tapGesture;
 
-@property( readonly  ) UIViewController *currentMenu;
+@property( nonatomic, readonly ) UIViewController *leftMenu;
+@property( nonatomic, readonly ) UIViewController *rightMenu;
+
+@property( nonatomic, readonly ) UIViewController *currentMenu;
+
 @property( nonatomic, readonly ) TLSidebarMenuDirection currentDirection;
 
 @property( nonatomic, readonly ) UIViewController *contentViewController;
@@ -25,12 +33,12 @@ typedef enum
 
 @property( nonatomic ) float slideInterval;
 
--(id)initWithContentViewController:(UIViewController *)aContentViewController;
+- ( id ) initWithContentViewController:(UIViewController *)aContentViewController;
 
--(void)hideSidebarAnimated:(BOOL)animated;
+- ( void ) hideSidebarAnimated:(BOOL)animated;
 
--(void) showSidebar:(UIViewController *)sidebar
-		inDirection:(TLSidebarMenuDirection)direction
-		   animated:(BOOL)animated;
+- ( void ) showSidebar:(UIViewController *)sidebar
+		   inDirection:(TLSidebarMenuDirection)direction
+			  animated:(BOOL)animated;
 
 @end

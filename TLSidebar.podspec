@@ -9,6 +9,6 @@ Pod::Spec.new do |s|
   s.source   = { :git => 'https://github.com/bsideup/TLSidebar.git',
 		 :commit => 'HEAD' }
 
-  s.source_files = 'TLSidebar/*.{h,m}'
+  s.source_files = 'TLSidebar/*.{h,m, mm}'
   s.requires_arc = true
 end
