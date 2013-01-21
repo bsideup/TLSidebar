@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name     = 'TLSidebar'
-  s.version  = '0.0.1'
+  s.version  = '0.0.2'
   s.platform = :ios, '5.0'
   s.license  = {:type => 'Custom', :text => 'Copyright (C) 2012 Sergey Egorov' }
   s.summary  = 'Another Facebook-like Sidebar fully compatible with Storyboard and ARC.'
