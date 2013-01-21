@@ -2,19 +2,20 @@
 
 #import "TLSidebarViewController.h"
 #import "TLSidebarContentSegue.h"
-#import <QuartzCore/QuartzCore.h>
 
 @implementation TLSidebarViewController
 {
 	UIView *blockerView;
 }
 
-@synthesize contentViewController = _contentViewController;
+@synthesize contentViewController = _contentViewController, sidebarHidden = _sidebarHidden;
 
+#ifdef __cplusplus
 tl_synthesize_signal(willShowSidebarAnimatedSignal, UIViewController *, BOOL);
 tl_synthesize_signal(didShowSidebarAnimatedSignal, UIViewController *, BOOL);
 tl_synthesize_signal(willHideSidebarAnimatedSignal, UIViewController *, BOOL);
 tl_synthesize_signal(didHideSidebarAnimatedSignal, UIViewController *, BOOL);
+#endif
 
 - ( id ) initWithContentViewController:(UIViewController *)aContentViewController
 {
@@ -39,8 +40,6 @@ tl_synthesize_signal(didHideSidebarAnimatedSignal, UIViewController *, BOOL);
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panItem:)];
 	_panGesture.enabled = NO;
 	_panGesture.maximumNumberOfTouches = 2;
-	//_panGesture.cancelsTouchesInView = YES;
-	//_panGesture.delaysTouchesBegan = YES;
 }
 
 - ( void ) viewWillAppear:(BOOL)animated
@@ -105,14 +104,15 @@ tl_synthesize_signal(didHideSidebarAnimatedSignal, UIViewController *, BOOL);
 - ( void ) setSidebarHidden:(BOOL)hidden
 				   animated:(BOOL)animated
 {
-	_sidebarHidden = hidden;
 
 	self.view.userInteractionEnabled = NO;
 	self.tapGesture.enabled = !hidden;
 
 	if ( hidden == NO )
 	{
-        self.willShowSidebarAnimatedSignal->notify(self.currentMenu, animated);
+#ifdef __cplusplus
+		self.willShowSidebarAnimatedSignal->notify( self.currentMenu, animated );
+#endif
 
 		self.view.backgroundColor = self.currentMenu.view.backgroundColor;
 		if ( blockerView == nil )
@@ -128,7 +128,9 @@ tl_synthesize_signal(didHideSidebarAnimatedSignal, UIViewController *, BOOL);
 	}
 	else
 	{
-        self.willHideSidebarAnimatedSignal->notify(self.currentMenu, animated);
+#ifdef __cplusplus
+		self.willHideSidebarAnimatedSignal->notify( self.currentMenu, animated );
+#endif
 
 		[self.contentViewController.view removeGestureRecognizer:self.tapGesture];
 	}
@@ -142,19 +144,28 @@ tl_synthesize_signal(didHideSidebarAnimatedSignal, UIViewController *, BOOL);
 					 }
 					 completion:^( BOOL completed )
 					 {
-						 self.view.userInteractionEnabled = YES;
 						 if ( hidden == YES )
 						 {
 							 [self.currentMenu.view removeFromSuperview];
 							 [blockerView removeFromSuperview];
 							 _currentMenu = nil;
 
-                             self.didHideSidebarAnimatedSignal->notify(self.currentMenu, animated);
+#ifdef __cplusplus
+							 if ( _sidebarHidden == NO )
+							 {
+								 self.didHideSidebarAnimatedSignal->notify( self.currentMenu, animated );
+							 }
+#endif
 						 }
 						 else
 						 {
-                             self.didShowSidebarAnimatedSignal->notify(self.currentMenu, animated);
+#ifdef __cplusplus
+							 self.didShowSidebarAnimatedSignal->notify( self.currentMenu, animated );
+#endif
 						 }
+
+						 _sidebarHidden = hidden;
+						 self.view.userInteractionEnabled = YES;
 					 }];
 }
 

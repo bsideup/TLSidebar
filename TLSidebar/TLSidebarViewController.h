@@ -1,5 +1,8 @@
 #import <UIKit/UIKit.h>
+
+#ifdef __cplusplus
 #import "TLSignals.h"
+#endif
 
 #define kDefaultMenuTableSize 280
 
@@ -12,10 +15,12 @@ typedef enum
 
 @interface TLSidebarViewController : UIViewController
 
+#ifdef __cplusplus
 @property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *willShowSidebarAnimatedSignal;
 @property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *didShowSidebarAnimatedSignal;
 @property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *willHideSidebarAnimatedSignal;
 @property (nonatomic, readonly) TLSignal<UIViewController *, BOOL> *didHideSidebarAnimatedSignal;
+#endif
 
 @property( nonatomic, readonly ) UIPanGestureRecognizer *panGesture;
 @property( nonatomic, readonly ) UITapGestureRecognizer *tapGesture;
